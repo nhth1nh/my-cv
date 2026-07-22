@@ -120,6 +120,13 @@
         .job-meta { color: #6b7280; } /* Tailwind gray-500 */
         html.dark .job-meta { color: #9ca3af; } /* Tailwind gray-400 */
         .list-disc li { color: var(--text-color); }
+        .list-disc li code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            background-color: var(--tag-bg-color);
+            padding: 0.05rem 0.35rem;
+            border-radius: 0.25rem;
+        }
         .skill-category-title { color: var(--link-color); } /* Using link color for skill category titles for consistency */
 
 
@@ -143,11 +150,44 @@
         }
 
         @media print {
+          @page {
+            margin: 12mm;
+          }
+
+          /* Force light-theme colors regardless of the on-screen dark mode toggle,
+             so a PDF export never ends up with light text on a white page. */
+          :root, html.dark {
+            --bg-color: #ffffff;
+            --text-color: #1f2937;
+            --card-bg-color: #ffffff;
+            --section-title-color: #1e3a8a;
+            --section-title-border-color: #60a5fa;
+            --link-color: #1d4ed8;
+            --link-hover-color: #1d4ed8;
+            --tag-bg-color: transparent;
+            --tag-text-color: #0c4a6e;
+            --timeline-dot-color: #60a5fa;
+            --timeline-line-color: #cbd5e1;
+            --header-name-color: #1d4ed8;
+            --header-subtitle-color: #4b5563;
+            --icon-color: #4b5563;
+          }
+
+          html, body {
+            font-size: 9.5pt;
+          }
+
           body {
-            font-size: 12pt;
-            margin: 1cm;
+            margin: 0;
             color: black;
             background: white;
+            /* Force a system font stack for print. The Google Fonts "Inter"
+               variable webfont produces PDFs where bold/medium/semibold text
+               (headings, job titles, skill tags) renders visually but is
+               missing or broken in the extracted text layer — invisible to
+               ATS/resume parsers even though it looks fine on screen. System
+               fonts are always embedded correctly. */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
             }
 
         .no-print {
@@ -162,6 +202,66 @@
             box-shadow: none !important;
             background: none !important;
         }
+
+        /* Tailwind's md: grid breakpoint never activates at print page width,
+           so force the 2-column layout explicitly instead of stacking. */
+        .container {
+            max-width: 100% !important;
+            padding: 0 !important;
+        }
+
+        .grid {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 0.5rem !important;
+        }
+
+        /* Compact header */
+        header.mb-10 { margin-bottom: 0.5rem !important; }
+        header .header-name { font-size: 20pt !important; }
+        header .header-subtitle { font-size: 11pt !important; margin-top: 0.1rem !important; }
+        header .contact-info { margin-top: 0.4rem !important; }
+        .contact-info a, .contact-info span { font-size: 8.5pt !important; }
+
+        /* Compact sections */
+        section.mb-8 { margin-bottom: 0.35rem !important; }
+        .section-title {
+            font-size: 12pt !important;
+            margin-bottom: 0.3rem !important;
+            padding-bottom: 0.1rem !important;
+            break-after: avoid;
+            page-break-after: avoid;
+        }
+
+        /* Compact cards, and never split a card across a page break */
+        .card {
+            padding: 0.35rem 0.7rem !important;
+            margin-bottom: 0.3rem !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.35rem !important;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        /* Drop the decorative timeline rail in print to reclaim horizontal space */
+        .timeline-container { padding-left: 0 !important; }
+        .timeline-line, .timeline-item::before { display: none !important; }
+
+        h3.text-xl { font-size: 11.5pt !important; }
+        .job-title { font-size: 10pt !important; }
+        .job-meta { font-size: 8.5pt !important; margin-bottom: 0.2rem !important; }
+        .list-disc.list-inside { font-size: 9.5pt !important; line-height: 1.22 !important; }
+        .list-disc li { margin-bottom: 0 !important; }
+
+        .tag {
+            padding: 0.05rem 0.4rem !important;
+            font-size: 7.5pt !important;
+            margin-right: 0.25rem !important;
+            margin-bottom: 0.15rem !important;
+            border: 1px solid var(--tag-text-color) !important;
+        }
+
+        footer { margin-top: 0.5rem !important; }
     }
 
     </style>
@@ -170,7 +270,7 @@
     <div class="container mx-auto max-w-4xl p-4 sm:p-6 lg:p-8">
 
         <header class="text-center mb-10 relative">
-            <button id="theme-toggle" title="Toggle dark mode" class="absolute top-0 right-0 mt-2 mr-2 sm:mt-0 sm:mr-0">
+            <button id="theme-toggle" title="Toggle dark mode" class="no-print absolute top-0 right-0 mt-2 mr-2 sm:mt-0 sm:mr-0">
                 <i class="fas fa-moon"></i> </button>
             <h1 class="text-4xl sm:text-5xl font-bold header-name">Nguyen Hung Thinh</h1>
             <p class="text-xl sm:text-2xl header-subtitle mt-2">Software Engineer</p>
@@ -192,7 +292,7 @@
             <h2 class="section-title">Summary</h2>
             <div class="card">
                 <p class="leading-relaxed">
-                    I am a dedicated Software Developer with experience in Java and various related technologies, focusing on developing web and enterprise applications. I am constantly learning and seeking to improve my skills in Spring Boot, React JS, Docker, SQL, and REST APIs. I have a particular interest in delivering clean, maintainable code while following Agile principles and applying test-driven development. I aim to contribute to meaningful projects and continually grow as a developer.
+                    Software Engineer specializing in Enterprise Java systems and AI integration. Proven track record building production-ready RAG pipelines, chunk-based document indexing, and secure LLM orchestrations using Azure OpenAI. Strong foundation in Clean Code, TDD, and automated CI/CD pipelines.
                 </p>
             </div>
         </section>
@@ -200,6 +300,26 @@
         <section class="mb-8">
             <h2 class="section-title">Experience</h2>
             <div class="timeline-container relative">
+
+                <div class="card relative pl-8 mb-8 timeline-item">
+                    <div class="timeline-line"></div>
+                    <h3 class="text-xl font-semibold skill-category-title">Axon Ivy Smart Workflow</h3>
+                    <p class="text-md font-medium job-title">AI Integration Engineer</p>
+                    <p class="text-sm job-meta mb-2">April 2026 - Present | On-site | Team size: 8</p>
+                    <ul class="list-disc list-inside space-y-1 mb-3">
+                        <li>Designed and built Smart Workflow's guardrail framework from scratch (collector, input/output adapters, provider architecture), including a PII-masking guardrail (email, phone, SSN, credit card, IP/MAC address) and a prompt-injection guardrail defending against roleplay-based and hidden-payload jailbreak attempts.</li>
+                        <li>Built chat-history and OpenInference tracing instrumentation to record every guardrail execution for real-time audit and observability within Smart Workflow.</li>
+                        <li>Diagnosed and fixed a classloading defect in LangChain4j's Azure OpenAI integration (hard-coded Netty dependency causing <code>NoClassDefFoundError</code>), replacing it with lazy <code>ServiceLoader</code>-based discovery — merged upstream into the open-source framework.</li>
+                        <li>Added Ollama as a self-hosted model provider to LangChain4j and contributed a <code>guardrailName()</code> observability API to its existing <code>GuardrailExecutedEvent</code>, both merged upstream into the open-source project.</li>
+                    </ul>
+                    <div class="mb-3">
+                        <span class="font-semibold text-sm">Technologies:</span>
+                        <span class="tag">LangChain4j</span><span class="tag">OpenAI</span><span class="tag">Ollama</span><span class="tag">Guardrails</span><span class="tag">Java</span>
+                    </div>
+                    <a href="https://github.com/axonivy-market/smart-workflow" target="_blank" rel="noopener noreferrer" class="icon-link text-sm">
+                        <i class="fab fa-github mr-1"></i> Axon Ivy Smart Workflow GitHub
+                    </a>
+                </div>
 
                 <div class="card relative pl-8 mb-8 timeline-item">
                     <div class="timeline-line"></div>
@@ -211,22 +331,20 @@
                         <li>Customized and self-hosted an open-source UI (e.g., LibreChat) for secure internal AI interaction.</li>
                         <li>Implemented Retrieval-Augmented Generation (RAG) pipeline for internal document querying and semantic search.</li>
                         <li>Developed embedding pipelines and integrated chunk-based document indexing for optimal AI performance.</li>
-                        <li>Ensured security and context isolation when exposing AI suggestions within a business process context.</li>
-                        <li>Reduced manual documentation lookup time for users by integrating semantic AI responses into daily workflow.</li>
                     </ul>
                     <div class="mb-3">
                         <span class="font-semibold text-sm">Technologies:</span>
-                        <span class="tag">Azure AI Search</span><span class="tag">Azure OpenAI</span><span class="tag">Python</span><span class="tag">Java</span><span class="tag">REST API</span><span class="tag">RAG</span>
+                        <span class="tag">Azure AI Search</span><span class="tag">Azure OpenAI</span><span class="tag">RAG</span><span class="tag">Python</span><span class="tag">Java</span><span class="tag">REST API</span>
                     </div>
                 </div>
-                
+
                 <div class="card relative pl-8 mb-8 timeline-item">
                     <div class="timeline-line"></div>
                     <h3 class="text-xl font-semibold skill-category-title">Axon Ivy Portal</h3>
                     <p class="text-md font-medium job-title">Full Stack Developer</p>
                     <p class="text-sm job-meta mb-2">October 2022 - Present | On-site | Team size: 8</p>
                     <ul class="list-disc list-inside space-y-1 mb-3">
-                        <li>Developed and maintained a web-based portal for users to manage their Axon Ivy platform applications.</li>
+                        <li>Co-developed and maintained the Axon Ivy Portal, the enterprise-facing web UI shipped with a BPM platform relied on by 750+ companies worldwide, covering task, case, and dashboard management workflows.</li>
                         <li>Enhanced user interface and user experience for task management.</li>
                         <li>Assisted with CI/CD processes using Docker and Jenkins, ensuring code quality with GitHub Actions.</li>
                     </ul>
@@ -279,6 +397,14 @@
             <div class="card">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
+                        <h4 class="font-semibold text-lg skill-category-title mb-2">AI & Data Engineering</h4>
+                        <span class="tag">RAG Pipelines</span><span class="tag">Azure OpenAI</span><span class="tag">Azure AI Search</span><span class="tag">LangChain4j</span><span class="tag">Document Chunking/Embedding</span><span class="tag">Python</span>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-lg skill-category-title mb-2">Backend & Enterprise</h4>
+                        <span class="tag">Java Core</span><span class="tag">Spring Boot</span><span class="tag">Hibernate</span><span class="tag">JPA</span><span class="tag">REST APIs</span>
+                    </div>
+                    <div>
                         <h4 class="font-semibold text-lg skill-category-title mb-2">Languages</h4>
                         <span class="tag">Java</span><span class="tag">JavaScript</span><span class="tag">Dart</span><span class="tag">Python</span>
                     </div>
@@ -300,7 +426,7 @@
                     </div>
                     <div>
                         <h4 class="font-semibold text-lg skill-category-title mb-2">APIs & Integration</h4>
-                        <span class="tag">REST Template</span><span class="tag">JAX-RS Client API</span><span class="tag">SAP SuccessFactors</span><span class="tag">Azure AI Search</span><span class="tag">Azure OpenAI</span>
+                        <span class="tag">REST Template</span><span class="tag">JAX-RS Client API</span><span class="tag">SAP SuccessFactors</span>
                     </div>
                 </div>
             </div>
@@ -324,8 +450,8 @@
                 <div class="card">
                     <h3 class="text-xl font-semibold skill-category-title mb-2"><i class="fas fa-graduation-cap mr-2"></i>Education</h3>
                     <p class="font-medium job-title">Bachelor of Science in Computer Science & Mathematics (In Progress)</p>
-                    <p class="job-meta">Ho Chi Minh City University of Science, Ho Chi Minh City, Vietnam</p>
-                    <p class="text-sm job-meta">Expected Graduation: 2029</p>
+                    <p class="job-meta">Ho Chi Minh City University of Science, Ho Chi Minh City, Vietnam <span class="whitespace-nowrap">(Evening Track)</span></p>
+                    <p class="text-sm job-meta">Expected Graduation: 2029 &mdash; Fully available for full-time employment</p>
                 </div>
                 <div class="card">
                      <h3 class="text-xl font-semibold skill-category-title mb-2"><i class="fas fa-certificate mr-2"></i>Certificates</h3>
@@ -340,21 +466,9 @@
             </div>
         </section>
 
-        <section class="mb-8">
-            <h2 class="section-title">Interests</h2>
-            <div class="card">
-                <ul class="list-disc list-inside space-y-2">
-                    <li>Exploring artificial intelligence and machine learning applications.</li>
-                    <li>Contributing to open-source projects and continuously improving coding skills.</li>
-                    <li>Playing badminton and staying active.</li>
-                    <li>Reading books on technology, programming, and personal development.</li>
-                </ul>
-            </div>
-        </section>
-
         <footer class="text-center mt-12 mb-6">
             <p class="text-sm job-meta">
-                Last updated: AUG 2025
+                Last updated: JUL 2026
             </p>
         </footer>
     </div>
